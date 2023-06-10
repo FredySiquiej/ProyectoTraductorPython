@@ -1,0 +1,158 @@
+package umg.compiladores;
+import java_cup.runtime.*;
+
+
+terminal   LLAVES_ABRE, LLAVES_CIERRA, CORCHETES_ABRE, CORCHETES_CIERRA,PUNTO,PUNTO_Y_COMA,PARENTESIS_ABRE,PARENTESIS_CIERRA,
+            SUMA,RESTA,MULTIPLICACION,DIAGONAL_DER,AND,OR,YY,PORCIENTO,FLOAT,DOUBLE,INT,LONG,SHORT,STRING,
+            BOOLEAN,IF,ELSE,SWITCH,CASE,BREAK,DEFAULT,FOR,WHILE,DO,SCANNER,NEXT,NEXTINT,NEXTFLOAT,NEXTDOUBLE,NEXTBOOLEAN,
+            NEXTLINE,NEXTBYTE,SYSTEM,OUT,PRINTLN,PRINTL,RETURN,ID,COMBINACIONID, DOS_PUNTOS, MAYOR_QUE , MAYOR_O_IGUAL_QUE, 
+            MENOR_QUE, MENOR_O_IGUAL_QUE , ASIGNACION, DIFERENTE , COMPARACION,IDENTIFICADOR, COMA , INCREMENTO, IGUAL_O_MAYOR_QUE, IGUAL_O_MENOR_QUE;
+terminal Integer NUMERO;
+
+
+non terminal Integer expr_list, expr , inst, declaracion, declaracion_variable,asignacion_variable, asignacion_operacion_aritmetica, asignacion_relaciones,
+                 asignacion_logicas, imprimir_pantalla , condicion_if , ciclo_do_while, ciclo_while ,declaracion_switch,cases, ciclo_for,  expresion, 
+                 term ,factor,  tipo, identificador,  numero_decimal,relacion ,operador_condicional,case,casos,inicializar_for,condicion_for,incremento,
+                 asignacion_variable_valores, continuidad_variables,continuidad_asignacion, contador, inicializacion;
+non terminal Integer numero, numero_entero;
+
+
+
+
+precedence left SUMA;
+precedence left RESTA;
+precedence left MULTIPLICACION;
+precedence left DIAGONAL_DER;
+precedence left MENOR_QUE;
+precedence left MAYOR_QUE;
+precedence left ASIGNACION;
+precedence left COMPARACION;
+precedence left DIFERENTE;
+precedence left IGUAL_O_MENOR_QUE;
+precedence left MENOR_O_IGUAL_QUE;
+precedence left IGUAL_O_MAYOR_QUE;
+precedence left MAYOR_O_IGUAL_QUE;
+precedence left AND;
+precedence left OR;
+precedence left NUMERO;
+precedence left ID;
+precedence left COMA;
+precedence left ASIGNACION;
+precedence left PUNTO_Y_COMA;
+precedence left tipo;
+
+
+
+
+start with inst ;
+
+inst                                  ::=       declaracion | /* e */ ;
+                                            
+
+declaracion                           ::=       declaracion_variable
+                                              | asignacion_variable_valores 
+                                              | asignacion_operacion_aritmetica 
+                                              | imprimir_pantalla   
+                                              | condicion_if 
+                                              | ciclo_while
+                                              | contador
+                                              | declaracion_switch
+                                              | ciclo_for
+                                              | ciclo_do_while
+                                               ;
+
+
+declaracion_variable                  ::=       tipo expresion PUNTO_Y_COMA
+                                              | tipo expresion COMA continuidad_variables PUNTO_Y_COMA 
+                                              | tipo expresion PUNTO_Y_COMA declaracion
+                                              | tipo expresion COMA continuidad_variables PUNTO_Y_COMA declaracion  ;
+
+continuidad_variables                 ::=       expresion 
+                                              | expresion COMA continuidad_variables  ;
+
+
+asignacion_variable_valores           ::=      tipo expresion ASIGNACION expresion PUNTO_Y_COMA
+                                           //  |tipo expresion ASIGNACION expresion EMPTY
+                                              |tipo expresion ASIGNACION expresion COMA continuidad_asignacion PUNTO_Y_COMA
+                                              |tipo expresion ASIGNACION expresion COMA continuidad_asignacion PUNTO_Y_COMA declaracion
+                                              |tipo expresion ASIGNACION expresion PUNTO_Y_COMA declaracion
+                                              |tipo expresion ASIGNACION expresion  declaracion
+                                              |expresion ASIGNACION expresion PUNTO_Y_COMA declaracion
+                                              ;
+                                             
+
+continuidad_asignacion                ::=      expresion ASIGNACION expresion
+                                             | expresion ASIGNACION expresion COMA continuidad_asignacion;
+
+
+asignacion_operacion_aritmetica       ::=      expresion PUNTO_Y_COMA
+                                             | expresion expresion PUNTO_Y_COMA;
+
+
+imprimir_pantalla 	              ::=      SYSTEM PUNTO OUT PUNTO PRINTLN PARENTESIS_ABRE expresion PARENTESIS_CIERRA  PUNTO_Y_COMA
+                                             | SYSTEM PUNTO OUT PUNTO PRINTLN PARENTESIS_ABRE expresion PARENTESIS_CIERRA  PUNTO_Y_COMA declaracion ;
+
+condicion_if                          ::=      IF PARENTESIS_ABRE  expresion PARENTESIS_CIERRA LLAVES_ABRE  declaracion LLAVES_CIERRA
+                                             | IF PARENTESIS_ABRE  expresion PARENTESIS_CIERRA LLAVES_ABRE  declaracion LLAVES_CIERRA    ELSE LLAVES_ABRE  declaracion LLAVES_CIERRA  
+                                             | IF PARENTESIS_ABRE  expresion PARENTESIS_CIERRA LLAVES_ABRE  declaracion LLAVES_CIERRA declaracion
+                                             | IF PARENTESIS_ABRE  expresion PARENTESIS_CIERRA LLAVES_ABRE  declaracion LLAVES_CIERRA    ELSE LLAVES_ABRE  declaracion LLAVES_CIERRA  declaracion  
+                                             | IF PARENTESIS_ABRE  expresion PARENTESIS_CIERRA LLAVES_ABRE  declaracion LLAVES_CIERRA    ELSE IF PARENTESIS_ABRE  expresion PARENTESIS_CIERRA LLAVES_ABRE declaracion LLAVES_CIERRA    
+                                             | IF PARENTESIS_ABRE  expresion PARENTESIS_CIERRA LLAVES_ABRE  declaracion LLAVES_CIERRA    ELSE IF PARENTESIS_ABRE  expresion PARENTESIS_CIERRA LLAVES_ABRE  declaracion LLAVES_CIERRA declaracion   ;
+
+ciclo_while                           ::=      WHILE PARENTESIS_ABRE  expresion PARENTESIS_CIERRA LLAVES_ABRE declaracion LLAVES_CIERRA
+                                             | WHILE PARENTESIS_ABRE  expresion PARENTESIS_CIERRA LLAVES_ABRE declaracion LLAVES_CIERRA declaracion ;
+
+declaracion_switch                    ::=      SWITCH PARENTESIS_ABRE expresion PARENTESIS_CIERRA  LLAVES_ABRE  cases LLAVES_CIERRA 
+                                             | SWITCH PARENTESIS_ABRE expresion PARENTESIS_CIERRA  LLAVES_ABRE  cases LLAVES_CIERRA declaracion ;
+
+cases                                 ::=      casos 
+                                             | casos cases;
+
+
+casos                                 ::=      CASE  expresion DOS_PUNTOS declaracion BREAK PUNTO_Y_COMA
+                                             | DEFAULT DOS_PUNTOS  declaracion  ;
+
+
+ciclo_for                             ::=      FOR PARENTESIS_ABRE declaracion PUNTO_Y_COMA expresion PUNTO_Y_COMA declaracion  PARENTESIS_CIERRA  LLAVES_ABRE declaracion LLAVES_CIERRA
+                                              | FOR PARENTESIS_ABRE declaracion PUNTO_Y_COMA expresion PUNTO_Y_COMA declaracion  PARENTESIS_CIERRA  LLAVES_ABRE declaracion LLAVES_CIERRA declaracion  ; 
+
+ciclo_do_while                        ::=     DO LLAVES_ABRE declaracion LLAVES_CIERRA  WHILE  PARENTESIS_ABRE expresion PARENTESIS_CIERRA  PUNTO_Y_COMA
+                                                | DO LLAVES_ABRE declaracion LLAVES_CIERRA  WHILE  PARENTESIS_ABRE expresion PARENTESIS_CIERRA  PUNTO_Y_COMA declaracion;
+
+
+tipo                                  ::=     INT 
+                                             |DOUBLE
+                                             |FLOAT
+                                             |LONG
+                                             |SHORT
+                                             |STRING
+                                             |BOOLEAN ;
+          
+contador  ::=    expresion INCREMENTO
+                |expresion INCREMENTO PUNTO_Y_COMA declaracion
+                |expresion INCREMENTO PUNTO_Y_COMA 
+                |expresion INCREMENTO declaracion;
+
+expresion ::= expresion SUMA expresion
+             | expresion RESTA expresion
+             | expresion MULTIPLICACION expresion
+             | expresion DIAGONAL_DER expresion
+             | expresion MENOR_QUE expresion
+             | expresion MAYOR_QUE expresion
+             | expresion ASIGNACION expresion
+             | expresion COMPARACION expresion
+             | expresion DIFERENTE expresion
+             | expresion IGUAL_O_MENOR_QUE expresion
+             | expresion MENOR_O_IGUAL_QUE expresion
+             | expresion IGUAL_O_MAYOR_QUE expresion
+             | expresion MAYOR_O_IGUAL_QUE expresion
+             | expresion AND expresion
+             | expresion OR expresion
+             | PARENTESIS_ABRE expresion PARENTESIS_CIERRA
+             | IDENTIFICADOR
+             | ID
+             | NUMERO; 
+
+/*
+Fredy Siquiej
+*/

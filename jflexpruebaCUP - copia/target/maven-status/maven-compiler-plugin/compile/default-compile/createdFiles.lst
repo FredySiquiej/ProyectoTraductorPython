@@ -1,0 +1,5 @@
+umg\compiladores\sym.class
+umg\compiladores\parser$CUP$parser$actions.class
+com\mycompany\jflexpruebacup\JflexpruebaCUP.class
+umg\compiladores\Lexer.class
+umg\compiladores\parser.class
